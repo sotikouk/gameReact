@@ -7,6 +7,7 @@ import Card from "../components/ui/Card";
 import InstructionText from "../components/ui/InstructionText";
 import PrimaryButton from "../components/ui/PrimaryButton";
 import Title from "../components/ui/Title";
+import GuessLogItem from "../components/game/GuessLogItem";
 
 function generateRandomBetween(min, max, exclude) {
     const rndNum = Math.floor(Math.random() * (max - min)) + min;
@@ -32,7 +33,7 @@ function generateRandomBetween(min, max, exclude) {
 
     useEffect(() => {
       if(currentGuess === userNumber) {
-          onGameOver();
+          onGameOver(guessRounds.length);
       }
     }, [currentGuess, userNumber, onGameOver]);
 
@@ -67,6 +68,8 @@ function generateRandomBetween(min, max, exclude) {
       setCurrentGuess(newRndNumber);
       setGuessRounds(prevGuessRounds => [newRndNumber, ...prevGuessRounds]);
     }
+
+    const guessRoundsListLength = guessRounds.length;
   
     return (
       <View style={styles.screen}>
@@ -89,9 +92,12 @@ function generateRandomBetween(min, max, exclude) {
           </View>
         </Card>
         {/*guessRounds.map(guessRound => <Text key={guessRound}>{guessRound}</Text>)*/}
-        <FlatList data={guessRounds} renderItem={(itemData) => <Text>{itemData.item}</Text>}
-          keyExtractor={(item) => item}
-        />
+        <View style={styles.listContainer}>
+            <FlatList data={guessRounds} renderItem={(itemData) => (<GuessLogItem roundNumber={guessRoundsListLength - itemData.index} guess={itemData.item}/>)}
+            keyExtractor={(item) => item}
+            />
+        </View>
+        
       </View>
     );
   }
@@ -111,5 +117,9 @@ function generateRandomBetween(min, max, exclude) {
   },
   buttonContainer: {
       flex: 1
+  },
+  listContainer: {
+    flex: 1,
+    padding: 16
   }
   });
